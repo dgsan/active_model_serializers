@@ -4,11 +4,11 @@ module ActiveModel
       class JsonApi < Adapter
         def serializable_hash(options = {})
           @hash = serializer.attributes
+          @hash[:links] ||= {}
+          @hash[:linked] ||= {}
 
           serializer.each_association do |name, association, options|
-            @hash[:links] ||= {}
-            @hash[:linked] ||= {}
-
+            
             if association.respond_to?(:each)
               add_links(name, association, options)
             else

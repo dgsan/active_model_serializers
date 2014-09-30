@@ -31,6 +31,10 @@ end
 
 class ProfileSerializer < ActiveModel::Serializer
   attributes :name, :description
+
+  def include? thing
+    true
+  end
 end
 
 Post = Class.new(Model)
@@ -39,11 +43,25 @@ Comment = Class.new(Model)
 PostSerializer = Class.new(ActiveModel::Serializer) do
   attributes :title, :body, :id
 
+  def include? thing
+    true
+  end
+
   has_many :comments
 end
 
 CommentSerializer = Class.new(ActiveModel::Serializer) do
   attributes :id, :body
 
+  def include? thing
+    true
+  end
+
   belongs_to :post
+end
+
+class CommentSubSerializer < CommentSerializer
+  def include? thing
+    false
+  end
 end

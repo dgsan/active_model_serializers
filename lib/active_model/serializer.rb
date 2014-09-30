@@ -99,14 +99,20 @@ module ActiveModel
       end
     end
 
+    def include?
+      false
+    end
+
     def each_association(&block)
       self.class._associations.dup.each do |name, options|
-        association = object.send(name)
-        serializer_class = ActiveModel::Serializer.serializer_for(association)
-        serializer = serializer_class.new(association)
+        if include? name
+          association = object.send(name)
+          serializer_class = ActiveModel::Serializer.serializer_for(association)
+          serializer = serializer_class.new(association)
 
-        if block_given?
-          block.call(name, serializer, options[:options])
+          if block_given?
+            block.call(name, serializer, options[:options])
+          end
         end
       end
     end
