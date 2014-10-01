@@ -161,22 +161,28 @@ end
       included_associations = filter(associations.keys)
       associations.each_with_object({}) do |(name, association), hash|
         if included_associations.include? name
-          if association.embed_ids?
-            ids = serialize_ids association
-            if association.embed_namespace?
-              hash = hash[association.embed_namespace] ||= {}
-              hash[association.key] = ids
-            else
-              hash[association.key] = ids
+          if include? name
+            if association.embed_ids?
+              ids = serialize_ids association
+              if association.embed_namespace?
+                hash = hash[association.embed_namespace] ||= {}
+                hash[association.key] = ids
+              else
+                hash[association.key] = ids
+              end
+            elsif association.embed_objects?
+              if association.embed_namespace?
+                hash = hash[association.embed_namespace] ||= {}
+              end
+              hash[association.embedded_key] = serialize association
             end
-          elsif association.embed_objects?
-            if association.embed_namespace?
-              hash = hash[association.embed_namespace] ||= {}
-            end
-            hash[association.embedded_key] = serialize association
           end
         end
       end
+    end
+
+    def include? name
+      true
     end
 
     def filter(keys)
