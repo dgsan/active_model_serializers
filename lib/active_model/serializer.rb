@@ -266,6 +266,15 @@ end
       hash = attributes
       hash.merge! associations
       hash = convert_keys(hash) if key_format.present?
+      hash.keep_if do |k,v|
+        if v.is_a? String
+          (v.length > 0)
+        elsif v == false
+          true
+        else
+          v
+        end
+      end
       @wrap_in_array ? [hash] : hash
     end
     alias_method :serializable_hash, :serializable_object
