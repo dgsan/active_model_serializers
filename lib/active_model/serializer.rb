@@ -266,8 +266,10 @@ end
       hash = attributes
       hash.merge! associations
       hash = convert_keys(hash) if key_format.present?
-      hash.keep_if do |k,v|
-        if v.is_a? String
+      hash.keep_if do |k, v|
+        if required? k
+          true
+        elsif v.is_a? String
           (v.length > 0)
         elsif v == false
           true
